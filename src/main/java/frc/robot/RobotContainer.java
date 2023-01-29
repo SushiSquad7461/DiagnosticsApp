@@ -5,10 +5,15 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.ExampleSubsystem;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -42,13 +47,6 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    new Trigger(m_exampleSubsystem::exampleCondition)
-        .onTrue(new ExampleCommand(m_exampleSubsystem));
-
-    // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
-    // cancelling on release.
-    m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
   }
 
   /**
@@ -58,6 +56,20 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return Autos.exampleAuto(m_exampleSubsystem);
+    return null;
+  }
+
+  public void checkForNewTestInput() {
+    //exampleSubsystem motorName Speed(0-1) coast/brake(0/1) flipEncoder(0/1) CurrentLimit(20) EncoderLimitHigh(1000) EncoderLimitLow(0)
+    String input = "ExampleSubsystem mod1Drive 0.1 0 0 0 0 0";
+    List<String> inputs = Arrays.asList(input.split(" "));
+    
+    switch (inputs.get(0)) {
+      case "ExampleSubsystem":
+        m_exampleSubsystem.newTestInput(inputs.subList(1, inputs.size()));
+        break;
+      default:
+        break;
+    }
   }
 }
