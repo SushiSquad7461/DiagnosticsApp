@@ -5,35 +5,30 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import frc.robot.util.MotorTest;
 import frc.robot.util.MotorTestInternalSpark;
 
-import java.util.List;
-
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMax.IdleMode;
-import frc.robot.util.MotorTest;
-
-import SushiFrcLib.Motor.MotorHelper;
 
 public class ExampleSubsystem extends SubsystemBase {
   //private TalonFX driveMotor;
   //WPI_TalonFX motor = new WPI_TalonFX(11);
-  CANSparkMax mod1Drive;
-  CANSparkMax mod2Drive;
-  CANSparkMax mod3Drive;
-  CANSparkMax mod4Drive;
+  public CANSparkMax mod1Drive;
+  public CANSparkMax mod2Drive;
+  public CANSparkMax mod3Drive;
+  public CANSparkMax mod4Drive;
+
+
   MotorTestInternalSpark motorInternalSpark1;
   MotorTestInternalSpark motorInternalSpark2;
   MotorTestInternalSpark motorInternalSpark3;
   MotorTestInternalSpark motorInternalSpark4;
+
   MotorTest motorTest;
   ExampleSubsystem instance = null;
 
@@ -45,7 +40,7 @@ public class ExampleSubsystem extends SubsystemBase {
   }
 
   /** Creates a new ExampleSubsystem. */
-  private ExampleSubsystem(){
+  public ExampleSubsystem(){
     mod1Drive = new CANSparkMax(1, CANSparkMax.MotorType.kBrushless);
     mod2Drive = new CANSparkMax(4, CANSparkMax.MotorType.kBrushless);
     mod3Drive = new CANSparkMax(7, CANSparkMax.MotorType.kBrushless);
@@ -84,10 +79,6 @@ public class ExampleSubsystem extends SubsystemBase {
     }
   }
 
-  // public void flipMotor(Boolean flipped){
-  //   motor.set(speed*-1);
-  // }
-
   public void flipEncoder(WPI_TalonFX motor, Boolean flipped){
     motor.setInverted(flipped);
 
@@ -109,33 +100,6 @@ public class ExampleSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Motor Speed", mod1Drive.get());
-  }
-
-  public void runMotor(CANSparkMax motor, List<String> inputs){
-      MotorTest.setSpeed(motor, Double.parseDouble(inputs.get(0)));
-      MotorTest.coastOrBrake(motor, Integer.parseInt(inputs.get(1)));
-      MotorTest.invertMotor(motor,inputs.get(2).equals("1"));
-      MotorTest.setCurrentLimit(motor, Integer.parseInt(inputs.get(3)) );
-      MotorTest.setEncoderLimit(motor, Integer.parseInt(inputs.get(4)), Integer.parseInt(inputs.get(5)));
-  }
-
-  public void newTestInput(List<String> inputs) {
-    CANSparkMax testMotor;
-
-    System.out.println(inputs);
-
-    switch (inputs.get(0)) {
-      case "mod1Drive":
-        testMotor = mod1Drive;
-        break;
-      default:
-        testMotor = null;
-        break;
-    }
-
-    if (testMotor != null) {
-      runMotor(testMotor, inputs.subList(1, inputs.size()));
-    }
   }
 
   @Override
