@@ -39,4 +39,8 @@ public class MotorTestInternalSpark {
         
     }
 
+    public void disable(CANSparkMax motor) {
+        motor.disable();
+    }
+
 }
