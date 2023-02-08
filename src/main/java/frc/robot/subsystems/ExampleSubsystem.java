@@ -52,10 +52,11 @@ public class ExampleSubsystem extends SubsystemBase {
     motorInternalSpark4 = new MotorTestInternalSpark(mod4Drive);
     
     motorTest = MotorTest.GetInstance();
-    motorTest.registerMotor(motorInternalSpark1, "motor1", "canID", "pdhPort");
-    motorTest.registerMotor(motorInternalSpark2, "motor2", "canID", "pdhPort");
-    motorTest.registerMotor(motorInternalSpark3, "motor3", "canID", "pdhPort");
-    motorTest.registerMotor(motorInternalSpark4, "motor4", "canID", "pdhPort");
+    motorTest.registerSparkMotor(motorInternalSpark1);
+    motorTest.registerSparkMotor(motorInternalSpark2);
+    motorTest.registerSparkMotor(motorInternalSpark3);
+    motorTest.registerSparkMotor(motorInternalSpark4);
+
 
   }
 

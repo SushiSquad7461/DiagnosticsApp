@@ -33,7 +33,7 @@ public class MotorTestCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    motorTest.isUpdated(); //if table updated => change values but dont run motor
+    motorTest.isUpdatedSpark(); //if table updated => change values but dont run motor
     motorTest.isRun(); //run motor if run command is true
     motorTest.isStop(); //stop motor if run command is false
   }
