@@ -11,8 +11,8 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 /** An example command that uses an example subsystem. */
 public class MotorTestCommand extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final ExampleSubsystem m_subsystem;
   private final MotorTest motorTest = new MotorTest();
+  private ExampleSubsystem m_subsystem;
 
   /**
    * Creates a new ExampleCommand.
@@ -21,9 +21,8 @@ public class MotorTestCommand extends CommandBase {
    */
   public MotorTestCommand(ExampleSubsystem subsystem) {
     m_subsystem = subsystem;
-    // Use addRequirements() here to declare subsystem dependencies.
+    // // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
-    //add motor test?
   }
 
   // Called when the command is initially scheduled.
