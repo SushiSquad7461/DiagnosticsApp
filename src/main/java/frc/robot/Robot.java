@@ -7,6 +7,9 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.MotorTestCommand;
+import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.util.MotorTest;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -16,8 +19,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  */
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
-
   private RobotContainer m_robotContainer;
+  private MotorTest motorTest;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -48,7 +51,8 @@ public class Robot extends TimedRobot {
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+  }
 
   @Override
   public void disabledPeriodic() {}
@@ -92,7 +96,9 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {
-    //
+    motorTest.isUpdated(); //if table updated => change values but dont run motor
+    motorTest.isRun(); //run motor if run command is true
+    motorTest.isStop(); //stop motor if run command is fals
   }
 
   /** This function is called once when the robot is first started up. */
