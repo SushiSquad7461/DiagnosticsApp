@@ -10,8 +10,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StringArraySubscriber;
 import frc.robot.util.MotorTest;
 
-
-
+import java.util.ArrayList;
 import java.util.List;
 
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -42,8 +41,8 @@ public class MotorTest {
   }
 
   static MotorTest instance = null;
-  static private List<MotorTestInternalSpark> motorListSpark;
-  static private List<MotorTestInternalFalcon> motorListFalcon;
+  static private List<MotorTestInternalSpark> motorListSpark = new ArrayList<MotorTestInternalSpark>();
+  static private List<MotorTestInternalFalcon> motorListFalcon = new ArrayList<MotorTestInternalFalcon>();
 
   public static MotorTest GetInstance(){
     if (instance == null){
@@ -57,7 +56,7 @@ public class MotorTest {
     }
 
     public void isUpdatedSpark(){
-      if (changed.get()){
+      if (changed.get()){ //this works
         for (int i = 0; i < motorListSpark.size(); i++){
           coastOrBrake(motorListSpark.get(i).motor);
           invertMotor(motorListSpark.get(i).motor);
@@ -215,6 +214,7 @@ public class MotorTest {
 
     public void registerSparkMotor(MotorTestInternalSpark motorInternalSpark) {
         motorListSpark.add(motorInternalSpark);
+        motorInternalSpark.motor.set(0.5);
     }
     public void registerFalconMotor(MotorTestInternalFalcon motorInternalFalcon) {
       motorListFalcon.add(motorInternalFalcon);

@@ -30,9 +30,9 @@ public class ExampleSubsystem extends SubsystemBase {
   MotorTestInternalSpark motorInternalSpark4;
 
   MotorTest motorTest;
-  ExampleSubsystem instance = null;
+  static ExampleSubsystem instance = null;
 
-  public ExampleSubsystem GetInstance(){
+  public static ExampleSubsystem GetInstance(){
     if (instance == null){
       instance = new ExampleSubsystem();
     }
@@ -41,10 +41,10 @@ public class ExampleSubsystem extends SubsystemBase {
 
   /** Creates a new ExampleSubsystem. */
   public ExampleSubsystem(){
-    mod1Drive = new CANSparkMax(1, CANSparkMax.MotorType.kBrushless);
-    mod2Drive = new CANSparkMax(4, CANSparkMax.MotorType.kBrushless);
-    mod3Drive = new CANSparkMax(7, CANSparkMax.MotorType.kBrushless);
-    mod4Drive = new CANSparkMax(10, CANSparkMax.MotorType.kBrushless);
+    mod1Drive = new CANSparkMax(1, CANSparkMax.MotorType.kBrushless); //id is correct
+    mod2Drive = new CANSparkMax(4, CANSparkMax.MotorType.kBrushless); //check id later
+    mod3Drive = new CANSparkMax(7, CANSparkMax.MotorType.kBrushless); //check id later
+    mod4Drive = new CANSparkMax(10, CANSparkMax.MotorType.kBrushless); //check id later
 
     motorInternalSpark1 = new MotorTestInternalSpark(mod1Drive);
     motorInternalSpark2 = new MotorTestInternalSpark(mod2Drive);
@@ -56,8 +56,6 @@ public class ExampleSubsystem extends SubsystemBase {
     motorTest.registerSparkMotor(motorInternalSpark2);
     motorTest.registerSparkMotor(motorInternalSpark3);
     motorTest.registerSparkMotor(motorInternalSpark4);
-
-
   }
 
   /**
