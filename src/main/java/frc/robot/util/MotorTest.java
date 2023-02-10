@@ -4,11 +4,10 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.revrobotics.CANSparkMax;
 
-import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.BooleanSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StringArraySubscriber;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.util.MotorTest;
 
 
@@ -22,11 +21,13 @@ public class MotorTest {
   private static NetworkTableInstance inst = NetworkTableInstance.getDefault();
   private static NetworkTable table = inst.getTable("dataTable");
   private static StringArraySubscriber dataTable = table.getStringArrayTopic("tableValues").subscribe(null);
+  private static BooleanSubscriber changed = table.getBooleanTopic("Changed?").subscribe(false);
+  private static BooleanSubscriber running = table.getBooleanTopic("Running?").subscribe(false);
 
   public void run(){
     inst.startClient4("systems-check");
     inst.setServerTeam(7461);
-    inst.setServer("systems-check",NetworkTableInstance.kDefaultPort4);
+    inst.setServer("systems-check", NetworkTableInstance.kDefaultPort4);
     inst.startDSClient();
 
     while (true){
@@ -56,7 +57,7 @@ public class MotorTest {
     }
 
     public void isUpdatedSpark(){
-      if (SmartDashboard.getString("changed?", null) == "true"){
+      if (changed.get()){
         for (int i = 0; i < motorListSpark.size(); i++){
           coastOrBrake(motorListSpark.get(i).motor);
           invertMotor(motorListSpark.get(i).motor);
@@ -67,7 +68,7 @@ public class MotorTest {
     }
 
     public void isUpdatedFalcon(){
-      if (SmartDashboard.getString("changed?", null) == "true"){
+      if (changed.get()){
         for (int i = 0; i < motorListSpark.size(); i++){
           coastOrBrake(motorListFalcon.get(i).motor);
           invertMotor(motorListFalcon.get(i).motor);
@@ -78,7 +79,7 @@ public class MotorTest {
     }
 
     public void isRun(){
-      if (SmartDashboard.getString("running?", null) == "true"){
+      if (running.get()){
         for (int i = 0; i < motorListSpark.size(); i++){
           setSpeed(motorListSpark.get(i).motor);
         }
@@ -89,7 +90,7 @@ public class MotorTest {
     }
 
     public void isStop(){
-      if (SmartDashboard.getString("running", null) == "false"){
+      if (!running.get()){
         for (int i = 0; i < motorListSpark.size(); i++){
           stopMotors(motorListSpark.get(i).motor);
         }
