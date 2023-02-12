@@ -28,34 +28,32 @@ public class ExampleSubsystem extends SubsystemBase {
   MotorTestInternalSpark motorInternalSpark2;
   MotorTestInternalSpark motorInternalSpark3;
   MotorTestInternalSpark motorInternalSpark4;
+  // static ExampleSubsystem instance = null;
 
-  MotorTest motorTest;
-  static ExampleSubsystem instance = null;
-
-  public static ExampleSubsystem GetInstance(){
-    if (instance == null){
-      instance = new ExampleSubsystem();
-    }
-    return instance;
-  }
+  // public static ExampleSubsystem GetInstance(){
+  //   if (instance == null){
+  //     instance = new ExampleSubsystem();
+  //   }
+  //   return instance;
+  // }
 
   /** Creates a new ExampleSubsystem. */
   public ExampleSubsystem(){
     mod1Drive = new CANSparkMax(1, CANSparkMax.MotorType.kBrushless); //id is correct
     mod2Drive = new CANSparkMax(4, CANSparkMax.MotorType.kBrushless); //check id later
-    mod3Drive = new CANSparkMax(7, CANSparkMax.MotorType.kBrushless); //check id later
-    mod4Drive = new CANSparkMax(10, CANSparkMax.MotorType.kBrushless); //check id later
+    // mod3Drive = new CANSparkMax(7, CANSparkMax.MotorType.kBrushless); //check id later
+    // mod4Drive = new CANSparkMax(10, CANSparkMax.MotorType.kBrushless); //check id later
 
     motorInternalSpark1 = new MotorTestInternalSpark(mod1Drive);
     motorInternalSpark2 = new MotorTestInternalSpark(mod2Drive);
-    motorInternalSpark3 = new MotorTestInternalSpark(mod3Drive);
-    motorInternalSpark4 = new MotorTestInternalSpark(mod4Drive);
+    // motorInternalSpark3 = new MotorTestInternalSpark(mod3Drive);
+    // motorInternalSpark4 = new MotorTestInternalSpark(mod4Drive);
     
-    motorTest = MotorTest.GetInstance();
+    MotorTest motorTest = MotorTest.getInstance();
     motorTest.registerSparkMotor(motorInternalSpark1);
     motorTest.registerSparkMotor(motorInternalSpark2);
-    motorTest.registerSparkMotor(motorInternalSpark3);
-    motorTest.registerSparkMotor(motorInternalSpark4);
+    // motorTest.registerSparkMotor(motorInternalSpark3);
+    // motorTest.registerSparkMotor(motorInternalSpark4);
   }
 
   /**
@@ -63,42 +61,8 @@ public class ExampleSubsystem extends SubsystemBase {
    *
    * @return a command
    */
-
-   // Falcons
-  public void setSpeed(WPI_TalonFX motor, double speed){
-    motor.set(speed);
-  }
-
-  public void coastOrBrake(WPI_TalonFX motor, int num){
-    if(num==1){
-      motor.setNeutralMode(NeutralMode.Brake);
-    }
-    else{
-      motor.setNeutralMode(NeutralMode.Coast);
-    }
-  }
-
-  public void flipEncoder(WPI_TalonFX motor, Boolean flipped){
-    motor.setInverted(flipped);
-
-  }
-
-  public void setCurrentLimit(WPI_TalonFX motor, double currentLimit){
-    SupplyCurrentLimitConfiguration CurrentLimit = new SupplyCurrentLimitConfiguration(true, currentLimit, currentLimit,0.0);
-    motor.configSupplyCurrentLimit(CurrentLimit);
-    
-  }
-
-  public void setEncoderLimit(WPI_TalonFX motor, double lowLimit, double highLimit){
-    if (motor.getSelectedSensorPosition()<lowLimit || motor.getSelectedSensorPosition()>highLimit){
-      motor.disable();
-    }
-  }
-
-
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Motor Speed", mod1Drive.get());
   }
 
   @Override

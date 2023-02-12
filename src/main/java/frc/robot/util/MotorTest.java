@@ -11,52 +11,47 @@ import edu.wpi.first.networktables.StringArraySubscriber;
 import frc.robot.util.MotorTest;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.revrobotics.CANSparkMax.IdleMode;
 
 
 public class MotorTest {
-  private static NetworkTableInstance inst = NetworkTableInstance.getDefault();
-  private static NetworkTable table = inst.getTable("dataTable");
-  private static StringArraySubscriber dataTable = table.getStringArrayTopic("tableValues").subscribe(null);
-  private static BooleanSubscriber changed = table.getBooleanTopic("Changed?").subscribe(false);
-  private static BooleanSubscriber running = table.getBooleanTopic("Running?").subscribe(false);
-
-  public void run(){
-    inst.startClient4("systems-check");
-    inst.setServerTeam(7461);
-    inst.setServer("systems-check", NetworkTableInstance.kDefaultPort4);
-    inst.startDSClient();
-
-    while (true){
-      try {
-        Thread.sleep(1000);
-      } catch (InterruptedException ex){
-        System.out.println("interrupted");
-        return;
-      }
-      
-    }
-  }
-
+  private NetworkTableInstance inst;
+  private NetworkTable table;
+  private String[] tableArray;
+  private StringArraySubscriber dataTable;
+  private BooleanSubscriber changed;
+  private BooleanSubscriber running;
   static MotorTest instance = null;
-  static private List<MotorTestInternalSpark> motorListSpark = new ArrayList<MotorTestInternalSpark>();
-  static private List<MotorTestInternalFalcon> motorListFalcon = new ArrayList<MotorTestInternalFalcon>();
+  private List<MotorTestInternalSpark> motorListSpark;
+  private List<MotorTestInternalFalcon> motorListFalcon;
 
-  public static MotorTest GetInstance(){
+  public static MotorTest getInstance() {
     if (instance == null){
       instance = new MotorTest();
     }
     return instance;
   }
 
-    public MotorTest(){
+    public MotorTest() {
+      inst = NetworkTableInstance.getDefault();
+      table = inst.getTable("dataTable");
+      dataTable = table.getStringArrayTopic("tableValues").subscribe(null);
+      changed = table.getBooleanTopic("Changed?").subscribe(false);
+      running = table.getBooleanTopic("Running?").subscribe(false);
+      tableArray = dataTable.get();
+
+      //static MotorTest instance = null;
+      motorListSpark = new ArrayList<MotorTestInternalSpark>();
+      motorListFalcon = new ArrayList<MotorTestInternalFalcon>();
 
     }
 
     public void isUpdatedSpark(){
-      if (changed.get()){ //this works
+      if (changed.get()){ 
+        tableArray = dataTable.get();
         for (int i = 0; i < motorListSpark.size(); i++){
           coastOrBrake(motorListSpark.get(i).motor);
           invertMotor(motorListSpark.get(i).motor);
@@ -79,8 +74,10 @@ public class MotorTest {
 
     public void isRun(){
       if (running.get()){
+        tableArray = dataTable.get();
         for (int i = 0; i < motorListSpark.size(); i++){
-          setSpeed(motorListSpark.get(i).motor);
+          setSpeed(motorListSpark.get(i).motor,i);
+          System.out.println("spinning");
         }
         for (int i = 0; i < motorListFalcon.size(); i++){
           setSpeed(motorListFalcon.get(i).motor);
@@ -89,7 +86,7 @@ public class MotorTest {
     }
 
     public void isStop(){
-      if (!running.get()){
+      if (!(running.get())){
         for (int i = 0; i < motorListSpark.size(); i++){
           stopMotors(motorListSpark.get(i).motor);
         }
@@ -99,10 +96,11 @@ public class MotorTest {
       }
     }
 
-    public static void coastOrBrake(CANSparkMax motor){
-      String[] array = dataTable.get();
-      for (int i = 0; i < array.length; i++){
-        String[] motorArray = (array[i]).split(" ");
+    public void coastOrBrake(CANSparkMax motor){
+      System.out.println(Arrays.toString(tableArray));
+      for (int i = 0; i < tableArray.length; i++){
+        String[] motorArray = (tableArray[i]).split(" ");
+
         IdleMode isCoast;
         if ((motorArray[6]) == "false"){
           isCoast = IdleMode.kBrake;
@@ -110,10 +108,11 @@ public class MotorTest {
           isCoast = IdleMode.kCoast;
         }
         motorListSpark.get(i).setIdleMode(motor, isCoast);
+
       }
     }
 
-    public static void coastOrBrake(WPI_TalonFX motor){
+    public void coastOrBrake(WPI_TalonFX motor){
       String[] array = dataTable.get();
       for (int i = 0; i < array.length; i++){
         String[] motorArray = (array[i]).split(" ");
@@ -128,38 +127,36 @@ public class MotorTest {
     }
     
 
-    public static void invertMotor(CANSparkMax motor){
-      String[] array = dataTable.get();
-      for (int i = 0; i < array.length; i++){
-        String[] motorArray = (array[i]).split(" ");
+    public void invertMotor(CANSparkMax motor){
+      for (int i = 0; i < tableArray.length; i++){
+        String[] motorArray = (tableArray[i]).split(" ");
         boolean isInverted = motorArray[7] == "false";
         motorListSpark.get(i).invertMotor(motor, isInverted);
       }
     }
-    public static void invertMotor(WPI_TalonFX motor){
-      String[] array = dataTable.get();
-      for (int i = 0; i < array.length; i++){
-        String[] motorArray = (array[i]).split(" ");
+    public void invertMotor(WPI_TalonFX motor){
+      for (int i = 0; i < tableArray.length; i++){
+        String[] motorArray = (tableArray[i]).split(" ");
         boolean isInverted = motorArray[7] == "false";
         motorListFalcon.get(i).invertMotor(motor, isInverted);
       }
     }
 
-    public static void setSpeed(CANSparkMax motor){
-      String[] array = dataTable.get();
-        for (int i = 0; i < array.length; i++){
-          String[] motorArray = (array[i]).split(" ");
-          double constSpeed = (Double.parseDouble(motorArray[4]));
-          double joystickSpeed = (Double.parseDouble(motorArray[5]));
-          double joystickVal = 1;
-          motorListSpark.get(i).setSpeed(motor, constSpeed + joystickVal * joystickSpeed);
-        }
+    public void setSpeed(CANSparkMax motor, int idx) {
+      System.out.println(tableArray[idx].getClass());
+      if (tableArray[idx].getClass() != null) {
+        String[] motorArray = (tableArray[idx]).split(" ");
+        double constSpeed = (Double.parseDouble(motorArray[4]));
+        double joystickSpeed = (Double.parseDouble(motorArray[5]));
+        double joystickVal = 1;
+        motorListSpark.get(idx).setSpeed(motor, constSpeed + joystickVal * joystickSpeed);
+      }
     }
 
-    public static void setSpeed(WPI_TalonFX motor){
-      String[] array = dataTable.get();
-      for (int i = 0; i < array.length; i++){
-        String[] motorArray = (array[i]).split(" ");
+    public void setSpeed(WPI_TalonFX motor){
+      System.out.println("is running");
+      for (int i = 0; i < tableArray.length; i++){
+        String[] motorArray = (tableArray[i]).split(" ");
         double constSpeed = (Double.parseDouble(motorArray[4]));
         double joystickSpeed = (Double.parseDouble(motorArray[5]));
         double joystickVal = 1;
@@ -167,45 +164,41 @@ public class MotorTest {
       }
   }
     
-    public static void stopMotors(CANSparkMax motor){
+    public void stopMotors(CANSparkMax motor){
       motor.disable();
     }
 
-    public static void stopMotors(WPI_TalonFX motor){
+    public void stopMotors(WPI_TalonFX motor){
       motor.disable();
     }
 
-    public static void setCurrentLimit(CANSparkMax motor){
-      String[] array = dataTable.get();
-      for (int i = 0; i < array.length; i++){
-        String[] motorArray = (array[i]).split(" ");
-        int currLimit = (Integer.parseInt(motorArray[8]));
+    public void setCurrentLimit(CANSparkMax motor){
+      for (int i = 0; i < tableArray.length; i++){
+        String[] motorArray = (tableArray[i]).split(" ");
+        int currLimit = (int)(Double.parseDouble(motorArray[8]));
         motorListSpark.get(i).setCurrentLimit(motor, currLimit);
       }
   }
 
-  public static void setCurrentLimit(WPI_TalonFX motor){
-    String[] array = dataTable.get();
-    for (int i = 0; i < array.length; i++){
-      String[] motorArray = (array[i]).split(" ");
-      int currLimit = (Integer.parseInt(motorArray[8]));
+  public void setCurrentLimit(WPI_TalonFX motor){
+    for (int i = 0; i < tableArray.length; i++){
+      String[] motorArray = (tableArray[i]).split(" ");
+      int currLimit = (int)(Double.parseDouble(motorArray[8]));
       motorListFalcon.get(i).setCurrentLimit(motor, currLimit);
     }
 }
     
-    public static void setEncoderLimit(CANSparkMax motor){
-      String[] array = dataTable.get();
-      for (int i = 0; i < array.length; i++){
-        String[] motorArray = (array[i]).split(" ");
+    public void setEncoderLimit(CANSparkMax motor){
+      for (int i = 0; i < tableArray.length; i++){
+        String[] motorArray = (tableArray[i]).split(" ");
         double lowLimit = (Double.parseDouble(motorArray[9]));
         double highLimit = (Double.parseDouble(motorArray[10]));     
         motorListSpark.get(i).setEncoderLimit(motor, lowLimit, highLimit);
       }
     }
-    public static void setEncoderLimit(WPI_TalonFX motor){
-      String[] array = dataTable.get();
-      for (int i = 0; i < array.length; i++){
-        String[] motorArray = (array[i]).split(" ");
+    public void setEncoderLimit(WPI_TalonFX motor){
+      for (int i = 0; i < tableArray.length; i++){
+        String[] motorArray = (tableArray[i]).split(" ");
         double lowLimit = (Double.parseDouble(motorArray[9]));
         double highLimit = (Double.parseDouble(motorArray[10]));     
         motorListFalcon.get(i).setEncoderLimit(motor, lowLimit, highLimit);
@@ -214,7 +207,7 @@ public class MotorTest {
 
     public void registerSparkMotor(MotorTestInternalSpark motorInternalSpark) {
         motorListSpark.add(motorInternalSpark);
-        motorInternalSpark.motor.set(0.5);
+        System.out.println(motorListSpark.size()+"hey");
     }
     public void registerFalconMotor(MotorTestInternalFalcon motorInternalFalcon) {
       motorListFalcon.add(motorInternalFalcon);

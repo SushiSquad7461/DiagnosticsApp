@@ -23,20 +23,26 @@ public class MotorTestInternalSpark {
 
     public void setSpeed(CANSparkMax motor, double newSpeed){
         double position = motor.getEncoder().getPosition();
-        if (!((newSpeed < 0 && position >= lowLimit) || position <= highLimit)){
-            newSpeed = 0;
+        if (highLimit != 0){
+            if (!((newSpeed < 0 && position >= lowLimit) || position <= highLimit)){
+                newSpeed = 0;
+            }
         }
         motor.set(newSpeed);
+        System.out.println("is running");
     }
     
     public void setCurrentLimit(CANSparkMax motor, int currentLimit){
-        motor.setSmartCurrentLimit(currentLimit);
+        if (currentLimit!=0){
+            motor.setSmartCurrentLimit(currentLimit);
+        }
     }
     
     public void setEncoderLimit(CANSparkMax motor, double lowLimit, double highLimit){
         this.lowLimit = lowLimit;
-        this.highLimit = highLimit;
-        
+        if(highLimit!=0){
+            this.highLimit = highLimit;
+        }
     }
 
     public void disable(CANSparkMax motor) {

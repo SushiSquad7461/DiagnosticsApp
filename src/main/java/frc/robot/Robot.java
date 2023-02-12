@@ -19,8 +19,10 @@ import frc.robot.util.MotorTest;
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
   private RobotContainer m_robotContainer;
-  private MotorTest motorTest = MotorTest.GetInstance();
-  private ExampleSubsystem exampleSubsystem = ExampleSubsystem.GetInstance();
+  // private MotorTest motorTest = MotorTest.GetInstance();
+  private ExampleSubsystem exampleSubsystem = new ExampleSubsystem();
+
+  private MotorTest motorTest = MotorTest.getInstance();
 
   /**
    * This function is run when the robot is first started up and should be used for any
