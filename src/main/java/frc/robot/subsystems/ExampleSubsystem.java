@@ -4,9 +4,9 @@
 
 package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+import frc.robot.util.Motor;
 import frc.robot.util.MotorTest;
-import frc.robot.util.MotorTestInternalSpark;
+import frc.robot.util.Neo;
 
 import com.revrobotics.CANSparkMax;
 
@@ -19,18 +19,8 @@ public class ExampleSubsystem extends SubsystemBase {
   public CANSparkMax mod4Drive;
 
 
-  MotorTestInternalSpark motorInternalSpark1;
-  MotorTestInternalSpark motorInternalSpark2;
-  MotorTestInternalSpark motorInternalSpark3;
-  MotorTestInternalSpark motorInternalSpark4;
-  // static ExampleSubsystem instance = null;
-
-  // public static ExampleSubsystem GetInstance(){
-  //   if (instance == null){
-  //     instance = new ExampleSubsystem();
-  //   }
-  //   return instance;
-  // }
+  Neo neo1;
+  Neo neo2;
 
   /** Creates a new ExampleSubsystem. */
   public ExampleSubsystem(){
@@ -39,14 +29,14 @@ public class ExampleSubsystem extends SubsystemBase {
     // mod3Drive = new CANSparkMax(7, CANSparkMax.MotorType.kBrushless); //check id later
     // mod4Drive = new CANSparkMax(10, CANSparkMax.MotorType.kBrushless); //check id later
 
-    motorInternalSpark1 = new MotorTestInternalSpark(mod1Drive);
-    motorInternalSpark2 = new MotorTestInternalSpark(mod2Drive);
+    neo1 = new Neo(mod1Drive);
+    neo2 = new Neo(mod2Drive);
     // motorInternalSpark3 = new MotorTestInternalSpark(mod3Drive);
     // motorInternalSpark4 = new MotorTestInternalSpark(mod4Drive);
     
     MotorTest motorTest = MotorTest.getInstance();
-    motorTest.registerSparkMotor(motorInternalSpark1);
-    motorTest.registerSparkMotor(motorInternalSpark2);
+    motorTest.registerMotor(neo1);
+    motorTest.registerMotor(neo2);
     // motorTest.registerSparkMotor(motorInternalSpark3);
     // motorTest.registerSparkMotor(motorInternalSpark4);
   }
