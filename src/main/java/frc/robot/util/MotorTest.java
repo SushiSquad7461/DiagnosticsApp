@@ -1,25 +1,32 @@
 package frc.robot.util;
 
-import edu.wpi.first.networktables.BooleanSubscriber;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.StringArraySubscriber;
+import edu.wpi.first.networktables.*;
 import frc.robot.util.MotorTest;
 import frc.robot.util.Motor;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import com.revrobotics.REVLibError;
 
 public class MotorTest {
   private NetworkTableInstance inst;
   private NetworkTable table;
-  private String[] tableArray;
-  private StringArraySubscriber dataTable;
 
+  private String[] tableArray;
+  private String[] motorArray;
+
+  private StringArraySubscriber dataTable;
+  private StringArrayPublisher motorTable;
   private BooleanSubscriber running;
+  private REVLibError errorChecker;
   
   static MotorTest instance;
   private List<Motor> motorList;
+
+  private int counter;
 
   public static MotorTest getInstance() {
     if (instance == null){
@@ -35,13 +42,19 @@ public class MotorTest {
       running = table.getBooleanTopic("Running?").subscribe(false);
       tableArray = dataTable.get();
 
+      motorTable = table.getStringArrayTopic("motors").publish();
+      motorArray = new String[2]; //make variable, constant
+
       instance = null;
       motorList = new ArrayList<Motor>();
+
+      counter = 0;
     }
 
     public void updateMotors() {
       tableArray = dataTable.get();
 
+      
       if (running.get()) {
         for (int i = 0; i < motorList.size(); i++) {
         System.out.println(tableArray[i]);
@@ -55,6 +68,7 @@ public class MotorTest {
             motorList.get(i).disable();
           }
         }
+
       }
       else {
         isStop(tableArray);
@@ -110,7 +124,12 @@ public class MotorTest {
       motorList.get(idx).setEncoderLimit(low, high);
     }
 
-    public void registerMotor(Motor motor) {
+    public void registerMotor(Motor motor, String subsystem, String motorName, int id, int pdhPort) {
         motorList.add(motor);
+        motorArray[counter] = subsystem + " " + motorName + " " + id + " " + pdhPort + " 0.0 0.0 0 0 0.0 0.0 0.0 0";
+        counter++;
+        System.out.println(Arrays.toString(motorArray));
+        motorTable.set(motorArray);
     }
+
 }
