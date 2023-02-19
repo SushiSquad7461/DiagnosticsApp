@@ -6,7 +6,6 @@ import com.revrobotics.REVLibError;
 public class Neo extends Motor {
     CANSparkMax motor;
     public int canID;
-    public String revErrors;
     public double currentLimit;
 
     public Neo(CANSparkMax motor) {
@@ -23,7 +22,7 @@ public class Neo extends Motor {
         } else {
             errorChecker = motor.setIdleMode(CANSparkMax.IdleMode.kBrake);
         }
-        revErrors +=  "coast/brake of " + motor.getDeviceId() + " is " + errorChecker.toString() + ", ";
+        allErrors +=  "\ncoast/brake of " + motor.getDeviceId() + " is " + errorChecker.toString() + ", ";
     }
 
     @Override
@@ -48,7 +47,7 @@ public class Neo extends Motor {
         if (currentLimit != 0){
             errorChecker = motor.setSmartCurrentLimit((int)(currentLimit));
         }
-        revErrors +=  "current limit of " + motor.getDeviceId() + " is " + errorChecker.toString() + ", ";
+        allErrors +=  "\ncurrent limit of " + motor.getDeviceId() + " is " + errorChecker.toString() + ", ";
     }
 
     @Override
@@ -64,29 +63,35 @@ public class Neo extends Motor {
         motor.disable();
     }
 
-    public String checkElecErrors() { //add to string array in motor test
-        String elecErrors = "";
+    public void checkElecErrors() { //add to string array in motor test
         if (motor.getFault(CANSparkMax.FaultID.kBrownout)){
-            elecErrors += motor.getDeviceId() + " brownout, ";
+            allErrors += "\n" + motor.getDeviceId() + " brownout, ";
         }
 
         if (motor.getFault(CANSparkMax.FaultID.kMotorFault)){
-            elecErrors += motor.getDeviceId() + " motor fault, ";
+            allErrors += "\n" + motor.getDeviceId() + " motor fault, ";
         }
 
         if (motor.getFault(CANSparkMax.FaultID.kOvercurrent)){
-            elecErrors += motor.getDeviceId() + " over current, ";
+            allErrors += "\n" + motor.getDeviceId() + " over current, ";
         }
 
         if (motor.getFault(CANSparkMax.FaultID.kStall)){
-            elecErrors += motor.getDeviceId() + " stalling, ";
+            allErrors += "\n" + motor.getDeviceId() + " stalling, ";
         }
 
         if (motor.getFault(CANSparkMax.FaultID.kHasReset)){
-            elecErrors += motor.getDeviceId() + " has reset, ";
+            allErrors += "\n" + motor.getDeviceId() + " has reset, ";
         }
 
-        return elecErrors;
+        
+        if (motor.getFault(CANSparkMax.FaultID.kCANRX)){
+            allErrors += "\n" + motor.getDeviceId() + " can rx, ";
+        }
+
+        if (motor.getFault(CANSparkMax.FaultID.kCANRX)){
+            allErrors += "\n" + motor.getDeviceId() +  CANSparkMax.FaultID.kCANRX.toString() + ", ";
+        }
     }
 
 }

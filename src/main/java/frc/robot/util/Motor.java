@@ -14,4 +14,5 @@ public abstract class Motor {
 
     double lowLimit = Double.MIN_VALUE;
     double highLimit = Double.MAX_VALUE;
+    String allErrors;
 }

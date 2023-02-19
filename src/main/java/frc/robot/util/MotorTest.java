@@ -17,15 +17,18 @@ public class MotorTest {
 
   private String[] tableArray;
   private String[] motorArray;
+  private String[] errorArray;
 
   private StringArraySubscriber dataTable;
-  private StringArrayPublisher motorTable;
   private BooleanSubscriber running;
-  private REVLibError errorChecker;
+
+  private StringArrayPublisher motorTable;
+  private StringArrayPublisher errorTable;
   
   static MotorTest instance;
   private List<Motor> motorList;
 
+  private final int numMotors;
   private int counter;
 
   public static MotorTest getInstance() {
@@ -42,8 +45,12 @@ public class MotorTest {
       running = table.getBooleanTopic("Running?").subscribe(false);
       tableArray = dataTable.get();
 
+      numMotors = 3; //change constant when motors are added
       motorTable = table.getStringArrayTopic("motors").publish();
-      motorArray = new String[2]; //make variable, constant
+      motorArray = new String[numMotors];
+
+      errorTable= table.getStringArrayTopic("errors").publish();
+      errorArray = new String[numMotors];
 
       instance = null;
       motorList = new ArrayList<Motor>();
@@ -53,7 +60,6 @@ public class MotorTest {
 
     public void updateMotors() {
       tableArray = dataTable.get();
-
       
       if (running.get()) {
         for (int i = 0; i < motorList.size(); i++) {
@@ -67,6 +73,8 @@ public class MotorTest {
           } else {
             motorList.get(i).disable();
           }
+
+          errorArray[i] = motorList.get(i).allErrors;
         }
 
       }
@@ -97,6 +105,7 @@ public class MotorTest {
     }
     
     public void setSpeed(int idx) {
+      System.out.println("in set speed");
       if (tableArray[idx] != null) {
         String[] motorArray = (tableArray[idx]).split(" ");
         double constSpeed = (Double.parseDouble(motorArray[4]));
