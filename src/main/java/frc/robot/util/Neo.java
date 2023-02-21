@@ -101,7 +101,6 @@ public class Neo extends Motor {
             allErrors.add("\n" + motor.getDeviceId() +  CANSparkMax.FaultID.kCANRX.toString());
         }
 
-        System.out.println("ms diana " + allErrors);
     }
 
 }

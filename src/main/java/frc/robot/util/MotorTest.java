@@ -19,7 +19,7 @@ public class MotorTest {
 
   private String[] tableArray;
   private String[] motorArray;
-  private String[] errorArray;
+  private ArrayList<String[]> errorArray;
 
   private StringArraySubscriber dataTable;
   private BooleanSubscriber running;
@@ -47,13 +47,12 @@ public class MotorTest {
       running = table.getBooleanTopic("Running?").subscribe(false);
       tableArray = dataTable.get();
 
-      numMotors = ExampleSubsystem.motorList.size(); //change constant when motors are added
+      numMotors = ExampleSubsystem.motorList.size();
       motorTable = table.getStringArrayTopic("motors").publish();
       motorArray = new String[numMotors];
 
       errorTable = table.getStringArrayTopic("errors").publish();
-      errorArray = new String[numMotors];
-
+  
       instance = null;
       motorList = new ArrayList<Motor>();
 
@@ -80,9 +79,10 @@ public class MotorTest {
           } catch(Exception e){
             System.out.println("Wrong motor id");
           }
-          errorArray.append(motorList.get(i).getErrors().toArray());
+          ArrayList<String> errorList = motorList.get(i).getErrors();
+          errorArray.add(errorList.toArray(new String[errorList.size()]));
         }
-        errorTable.set(errorArray);
+        errorTable.set(errorArray.toArray(new String[numMotors]));
       }
       else {
         isStop(tableArray);
