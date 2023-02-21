@@ -1,5 +1,7 @@
 package frc.robot.util;
 
+import java.util.ArrayList;
+
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
@@ -55,5 +57,10 @@ public class Falcon extends Motor{
     @Override
     public void disable(){
         motor.disable();
+    }
+
+    public void checkElecErrors(){}
+    public ArrayList<String> getErrors(){
+        return null;
     }
 }

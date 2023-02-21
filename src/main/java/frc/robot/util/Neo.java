@@ -1,5 +1,7 @@
 package frc.robot.util;
 
+import java.util.ArrayList;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVLibError;
 
@@ -14,6 +16,12 @@ public class Neo extends Motor {
         this.currentLimit = motor.getOutputCurrent();
     }
 
+    public ArrayList<String> getErrors() {
+        ArrayList<String> ret = allErrors;
+        allErrors = new ArrayList<String>();
+        return ret;
+    }
+
     @Override
     public void setIdle(IdleMode idle) {
         REVLibError errorChecker = REVLibError.kOk;
@@ -22,7 +30,7 @@ public class Neo extends Motor {
         } else {
             errorChecker = motor.setIdleMode(CANSparkMax.IdleMode.kBrake);
         }
-        allErrors +=  "\ncoast/brake of " + motor.getDeviceId() + " is " + errorChecker.toString() + ", ";
+        allErrors.add("\ncoast/brake of " + motor.getDeviceId() + " is " + errorChecker.toString());
     }
 
     @Override
@@ -47,7 +55,7 @@ public class Neo extends Motor {
         if (currentLimit != 0){
             errorChecker = motor.setSmartCurrentLimit((int)(currentLimit));
         }
-        allErrors +=  "\ncurrent limit of " + motor.getDeviceId() + " is " + errorChecker.toString() + ", ";
+        allErrors.add("\ncurrent limit of " + motor.getDeviceId() + " is " + errorChecker.toString());
     }
 
     @Override
@@ -65,33 +73,35 @@ public class Neo extends Motor {
 
     public void checkElecErrors() { //add to string array in motor test
         if (motor.getFault(CANSparkMax.FaultID.kBrownout)){
-            allErrors += "\n" + motor.getDeviceId() + " brownout, ";
+            allErrors.add("\n" + motor.getDeviceId() + " brownout");
         }
 
         if (motor.getFault(CANSparkMax.FaultID.kMotorFault)){
-            allErrors += "\n" + motor.getDeviceId() + " motor fault, ";
+            allErrors.add("\n" + motor.getDeviceId() + " motor fault");
         }
 
         if (motor.getFault(CANSparkMax.FaultID.kOvercurrent)){
-            allErrors += "\n" + motor.getDeviceId() + " over current, ";
+            allErrors.add("\n" + motor.getDeviceId() + " over current");
         }
 
         if (motor.getFault(CANSparkMax.FaultID.kStall)){
-            allErrors += "\n" + motor.getDeviceId() + " stalling, ";
+            allErrors.add("\n" + motor.getDeviceId() + " stalling");
         }
 
         if (motor.getFault(CANSparkMax.FaultID.kHasReset)){
-            allErrors += "\n" + motor.getDeviceId() + " has reset, ";
+            allErrors.add("\n" + motor.getDeviceId() + " has reset");
         }
 
         
         if (motor.getFault(CANSparkMax.FaultID.kCANRX)){
-            allErrors += "\n" + motor.getDeviceId() + " can rx, ";
+            allErrors.add("\n" + motor.getDeviceId() + " can rx");
         }
 
         if (motor.getFault(CANSparkMax.FaultID.kCANRX)){
-            allErrors += "\n" + motor.getDeviceId() +  CANSparkMax.FaultID.kCANRX.toString() + ", ";
+            allErrors.add("\n" + motor.getDeviceId() +  CANSparkMax.FaultID.kCANRX.toString());
         }
+
+        System.out.println("ms diana " + allErrors);
     }
 
 }

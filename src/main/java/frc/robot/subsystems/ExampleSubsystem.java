@@ -10,40 +10,28 @@ import frc.robot.util.MotorTest;
 //import frc.robot.util.MotorTestInternalSpark;
 import frc.robot.util.Neo;
 
+import java.util.ArrayList;
+
 import com.revrobotics.CANSparkMax;
 
 public class ExampleSubsystem extends SubsystemBase {
   //private TalonFX driveMotor;
   //WPI_TalonFX motor = new WPI_TalonFX(11);
-  public CANSparkMax mod1Drive;
-  public CANSparkMax mod2Drive;
-  public CANSparkMax mod3Drive;
 
-  Neo neo1;
-  Neo neo2;
-  Neo neo3;
-  // when adding new motors go to motortest, and change numMotors to the correct number of motors
-
+  public static ArrayList<Integer> motorList = new ArrayList<Integer>() {
+    {
+      add(15);
+      add(4);
+      add(10);
+    }
+  };
   /** Creates a new ExampleSubsystem. */
   public ExampleSubsystem(){ // ids for neoSwerve: 5,4,10
-    try {
-      mod1Drive = new CANSparkMax(5, CANSparkMax.MotorType.kBrushless);
-      mod2Drive = new CANSparkMax(4, CANSparkMax.MotorType.kBrushless);
-      mod3Drive = new CANSparkMax(10, CANSparkMax.MotorType.kBrushless);
-    } catch (CANMessageNotFoundException e) {
-      System.out.println("Wrong motor id");
-    }
-    
-
-    neo1 = new Neo(mod1Drive);
-    neo2 = new Neo(mod2Drive);
-    neo3 = new Neo(mod3Drive);
-
     MotorTest motorTest = MotorTest.getInstance();
-    motorTest.registerMotor(neo1, "subsystem0", "motor1", neo1.canID, 0);
-    motorTest.registerMotor(neo2, "subsystem0", "motor2", neo2.canID, 1);
-    motorTest.registerMotor(neo3, "subsystem0", "motor2", neo3.canID, 2);
-
+    for (int i = 0; i < motorList.size(); i++) {
+      CANSparkMax motor = (new CANSparkMax(motorList.get(i), CANSparkMax.MotorType.kBrushless));
+      motorTest.registerMotor(new Neo(motor), "subsytem0", "motor" + i, motor.getDeviceId(), i);
+    }
   }
 
   /**

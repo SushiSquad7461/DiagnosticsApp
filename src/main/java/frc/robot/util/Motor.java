@@ -1,5 +1,7 @@
 package frc.robot.util;
 
+import java.util.ArrayList;
+
 public abstract class Motor {
     enum IdleMode {
         COAST,
@@ -11,8 +13,10 @@ public abstract class Motor {
     public abstract void setCurrentLimit(double limit);
     public abstract void setEncoderLimit(double low, double high);
     public abstract void disable();
+    public abstract void checkElecErrors();
+    public abstract ArrayList<String> getErrors();
 
     double lowLimit = Double.MIN_VALUE;
     double highLimit = Double.MAX_VALUE;
-    String allErrors;
+    ArrayList<String> allErrors;
 }

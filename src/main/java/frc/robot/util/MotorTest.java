@@ -1,8 +1,10 @@
 package frc.robot.util;
 
+import edu.wpi.first.hal.can.CANMessageNotFoundException;
 import edu.wpi.first.networktables.*;
 import frc.robot.util.MotorTest;
 import frc.robot.util.Motor;
+import frc.robot.subsystems.ExampleSubsystem;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -45,11 +47,11 @@ public class MotorTest {
       running = table.getBooleanTopic("Running?").subscribe(false);
       tableArray = dataTable.get();
 
-      numMotors = 3; //change constant when motors are added
+      numMotors = ExampleSubsystem.motorList.size(); //change constant when motors are added
       motorTable = table.getStringArrayTopic("motors").publish();
       motorArray = new String[numMotors];
 
-      errorTable= table.getStringArrayTopic("errors").publish();
+      errorTable = table.getStringArrayTopic("errors").publish();
       errorArray = new String[numMotors];
 
       instance = null;
@@ -63,20 +65,24 @@ public class MotorTest {
       
       if (running.get()) {
         for (int i = 0; i < motorList.size(); i++) {
-        System.out.println(tableArray[i]);
-          if (tableArray.length > i && !tableArray[i].equals("containsNull")) {
-            coastOrBrake(i);
-            invertMotor(i);
-            setCurrentLimit(i);
-            setEncoderLimit(i);
-            setSpeed(i);
-          } else {
-            motorList.get(i).disable();
+          try {
+            //System.out.println(tableArray[i]);
+            if (tableArray.length > i && !tableArray[i].equals("containsNull")) {
+              coastOrBrake(i);
+              invertMotor(i);
+              setCurrentLimit(i);
+              setEncoderLimit(i);
+              setSpeed(i);
+            } else {
+              motorList.get(i).disable();
+            }
+            motorList.get(i).checkElecErrors();
+          } catch(Exception e){
+            System.out.println("Wrong motor id");
           }
-
-          errorArray[i] = motorList.get(i).allErrors;
+          errorArray.append(motorList.get(i).getErrors().toArray());
         }
-
+        errorTable.set(errorArray);
       }
       else {
         isStop(tableArray);
