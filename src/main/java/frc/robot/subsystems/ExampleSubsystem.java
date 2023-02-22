@@ -20,9 +20,9 @@ public class ExampleSubsystem extends SubsystemBase {
 
   public static ArrayList<Integer> motorList = new ArrayList<Integer>() {
     {
-      add(15);
-      add(4);
-      add(10);
+      add(20);
+      add(7);
+      add(2);
     }
   };
   /** Creates a new ExampleSubsystem. */

@@ -28,7 +28,7 @@ public class Falcon extends Motor{
     }
     
     @Override
-    public void setSpeed(double newSpeed){
+    public void setSpeed(double newSpeed, boolean isJoystick){
         double position = motor.getSelectedSensorPosition();
         if (!((newSpeed < 0 && position >= lowLimit) || position <= highLimit)){
             newSpeed = 0;

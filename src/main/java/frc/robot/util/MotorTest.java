@@ -6,7 +6,6 @@ import frc.robot.util.MotorTest;
 import frc.robot.util.Motor;
 import frc.robot.subsystems.ExampleSubsystem;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -18,8 +17,8 @@ public class MotorTest {
   private NetworkTable table;
 
   private String[] tableArray;
-  private String[] motorArray;
-  private ArrayList<String[]> errorArray;
+  private ArrayList<String> motorArray;
+  private ArrayList<String> errorArray;
   private ArrayList<String> errorList;
 
   private StringArraySubscriber dataTable;
@@ -31,8 +30,7 @@ public class MotorTest {
   static MotorTest instance;
   private List<Motor> motorList;
 
-  private final int numMotors;
-  private int counter;
+  private static int numMotors;
 
   public static MotorTest getInstance() {
     if (instance == null){
@@ -50,23 +48,21 @@ public class MotorTest {
 
       numMotors = ExampleSubsystem.motorList.size();
       motorTable = table.getStringArrayTopic("motors").publish();
-      motorArray = new String[numMotors];
+      motorArray = new ArrayList<String>();
 
       errorTable = table.getStringArrayTopic("errors").publish();
       errorList = new ArrayList<String>();
+      errorArray = new ArrayList<String>();
   
       instance = null;
       motorList = new ArrayList<Motor>();
-
-      counter = 0;
     }
 
     public void updateMotors() {
       tableArray = dataTable.get();
-      try {
+      //try {
         if (running.get()) {
           for (int i = 0; i < motorList.size(); i++) {
-            //System.out.println(tableArray[i]);
             if (tableArray.length > i && !tableArray[i].equals("containsNull")) {
               coastOrBrake(i);
               invertMotor(i);
@@ -77,9 +73,9 @@ public class MotorTest {
               motorList.get(i).disable();
             }
             motorList.get(i).checkElecErrors();
-            errorList = motorList.get(i).getErrors();
+            errorList = motorList.get(i).getErrors(); //array list of strings
             if (errorList != null){
-              errorArray.add(errorList.toArray(new String[errorList.size()]));
+              errorArray.add(String.join(" ", errorList));
             }
           }
             if (errorArray != null){
@@ -88,9 +84,6 @@ public class MotorTest {
         } else {
           isStop(tableArray);
         } 
-      } catch(Exception e){
-        System.out.println("Wrong motor id");
-      }
 
     }
 
@@ -120,9 +113,8 @@ public class MotorTest {
       if (tableArray[idx] != null) {
         String[] motorArray = (tableArray[idx]).split(" ");
         double constSpeed = (Double.parseDouble(motorArray[4]));
-        double joystickSpeed = (Double.parseDouble(motorArray[5]));
-        double joystickVal = 1;
-        motorList.get(idx).setSpeed(constSpeed + joystickVal * joystickSpeed);
+        boolean isJoystick = (Boolean.parseBoolean(motorArray[5])); //make boolean
+        motorList.get(idx).setSpeed(constSpeed, isJoystick);
       } else {
         motorList.get(idx).disable();
       }
@@ -145,11 +137,10 @@ public class MotorTest {
     }
 
     public void registerMotor(Motor motor, String subsystem, String motorName, int id, int pdhPort) {
-        motorList.add(motor);
-        motorArray[counter] = subsystem + " " + motorName + " " + id + " " + pdhPort + " 0.0 0.0 0 0 0.0 0.0 0.0 0";
-        counter++;
-        System.out.println(Arrays.toString(motorArray));
-        motorTable.set(motorArray);
+      motorList.add(motor);
+      motorArray.add(subsystem + " " + motorName + " " + id + " " + pdhPort + " 0.0 0 0 0 0.0 0.0 0.0 0");
+      motorTable.set(motorArray.toArray(new String[motorList.size()]));
+      numMotors = motorList.size();
     }
 
 }
