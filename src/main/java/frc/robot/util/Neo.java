@@ -17,9 +17,7 @@ public class Neo extends Motor {
     }
 
     public ArrayList<String> getErrors() {
-        ArrayList<String> ret = allErrors;
-        allErrors = new ArrayList<String>();
-        return ret;
+        return allErrors;
     }
 
     @Override

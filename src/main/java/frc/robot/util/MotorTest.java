@@ -20,6 +20,7 @@ public class MotorTest {
   private String[] tableArray;
   private String[] motorArray;
   private ArrayList<String[]> errorArray;
+  private ArrayList<String> errorList;
 
   private StringArraySubscriber dataTable;
   private BooleanSubscriber running;
@@ -52,6 +53,7 @@ public class MotorTest {
       motorArray = new String[numMotors];
 
       errorTable = table.getStringArrayTopic("errors").publish();
+      errorList = new ArrayList<String>();
   
       instance = null;
       motorList = new ArrayList<Motor>();
@@ -61,10 +63,9 @@ public class MotorTest {
 
     public void updateMotors() {
       tableArray = dataTable.get();
-      
-      if (running.get()) {
-        for (int i = 0; i < motorList.size(); i++) {
-          try {
+      try {
+        if (running.get()) {
+          for (int i = 0; i < motorList.size(); i++) {
             //System.out.println(tableArray[i]);
             if (tableArray.length > i && !tableArray[i].equals("containsNull")) {
               coastOrBrake(i);
@@ -76,17 +77,21 @@ public class MotorTest {
               motorList.get(i).disable();
             }
             motorList.get(i).checkElecErrors();
-          } catch(Exception e){
-            System.out.println("Wrong motor id");
+            errorList = motorList.get(i).getErrors();
+            if (errorList != null){
+              errorArray.add(errorList.toArray(new String[errorList.size()]));
+            }
           }
-          ArrayList<String> errorList = motorList.get(i).getErrors();
-          errorArray.add(errorList.toArray(new String[errorList.size()]));
-        }
-        errorTable.set(errorArray.toArray(new String[numMotors]));
+            if (errorArray != null){
+              errorTable.set(errorArray.toArray(new String[numMotors]));
+            }
+        } else {
+          isStop(tableArray);
+        } 
+      } catch(Exception e){
+        System.out.println("Wrong motor id");
       }
-      else {
-        isStop(tableArray);
-      }
+
     }
 
     public void isStop(String[] tableArray){
